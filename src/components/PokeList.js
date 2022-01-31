@@ -6,24 +6,40 @@ import Row from "react-bootstrap/Row";
 
 import PokeCard from "./PokeCard";
 import Loader from "./Loader";
+import { Button } from "react-bootstrap";
 
 const PokeList = () => {
-  const [pokemons, setPokemons] = useState();
+  const [pokemons, setPokemons] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [nextPokemons, setNextPokemons] = useState(
+    "https://pokeapi.co/api/v2/pokemon?limit=50&offset=0"
+  );
 
   useEffect(() => {
-    axios.get("https://pokeapi.co/api/v2/pokemon/").then((res) => {
-      const fetches = res.data.results.map((p) =>
-        axios.get(p.url).then((res) => res.data)
-      );
-
-      Promise.all(fetches).then((data) => {
-        setPokemons(data);
-        setIsLoading(false);
-      });
-      console.log(pokemons);
-    });
+    getPokemons();
   }, []);
+
+  const getPokemons = () => {
+    axios
+      .get(nextPokemons)
+      .catch((error) => {
+        console.log(error);
+      })
+      .then((res) => {
+        const fetches = res.data.results.map((p) =>
+          axios.get(p.url).then((res) => res.data)
+        );
+
+        setNextPokemons(res.data.next);
+
+        Promise.all(fetches).then((data) => {
+          setPokemons((prevState) => [...prevState, ...data]);
+        });
+        setIsLoading(false);
+        console.log(pokemons);
+        console.log(nextPokemons);
+      });
+  };
 
   return (
     <div>
@@ -45,6 +61,9 @@ const PokeList = () => {
             ))}
         </Row>
       </Container>
+      <Button variant="primary" size="lg" onClick={getPokemons}>
+        Load more
+      </Button>
     </div>
   );
 };
