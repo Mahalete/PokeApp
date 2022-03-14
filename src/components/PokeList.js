@@ -3,12 +3,12 @@ import axios from "axios";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
+import Button from "react-bootstrap/Button";
 
 import PokeCard from "./PokeCard";
 import Loader from "./Loader";
-import { Button } from "react-bootstrap";
 
-const PokeList = () => {
+const PokeList = ({ favHandler, favourites }) => {
   const [pokemons, setPokemons] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [nextPokemons, setNextPokemons] = useState(
@@ -17,7 +17,7 @@ const PokeList = () => {
 
   useEffect(() => {
     getPokemons();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const getPokemons = () => {
     axios
@@ -36,8 +36,6 @@ const PokeList = () => {
           setPokemons((prevState) => [...prevState, ...data]);
         });
         setIsLoading(false);
-        console.log(pokemons);
-        console.log(nextPokemons);
       });
   };
 
@@ -48,7 +46,7 @@ const PokeList = () => {
           xs={2}
           md={4}
           lg={5}
-          className="justify-content-between my-5 d-flex gap-3"
+          className="justify-content-evenly my-5 d-flex gap-3"
         >
           {isLoading && <Loader />}
           {!isLoading &&
@@ -57,13 +55,21 @@ const PokeList = () => {
                 key={pokemon.name}
                 name={pokemon.name}
                 image={pokemon.sprites.other.dream_world.front_default}
+                pokemonName={pokemon.name}
+                fav={favourites.some((item) => item.name === pokemon.name)}
+                favClick={() => favHandler(pokemon)}
+                type={pokemon.types[0].type.name}
               />
             ))}
         </Row>
       </Container>
-      <Button variant="primary" size="lg" onClick={getPokemons}>
-        Load more
-      </Button>
+      <Container>
+        <Row>
+          <Button variant="secondary" size="lg" onClick={getPokemons}>
+            Load more
+          </Button>
+        </Row>
+      </Container>
     </div>
   );
 };
