@@ -12,9 +12,9 @@ const PokeCard = ({ name, image, pokemonName, type, fav, favClick }) => {
       <Card.Header className="d-flex justify-content-between">
         <Card.Title>{name}</Card.Title>
         {fav ? (
-          <HeartFill onClick={favClick} size="30" color="white" />
+          <HeartFill onClick={favClick} size="30" color="red" />
         ) : (
-          <Heart onClick={favClick} size="30" color="white" />
+          <Heart onClick={favClick} size="30" color="red" />
         )}
       </Card.Header>
       <Card.Body>
@@ -22,7 +22,7 @@ const PokeCard = ({ name, image, pokemonName, type, fav, favClick }) => {
       </Card.Body>
       <Card.Footer className="d-grid">
         <LinkContainer to={`/${pokemonName}`}>
-          <Button variant="outline-light" size="sm">
+          <Button variant="outline" size="sm">
             Details
           </Button>
         </LinkContainer>
